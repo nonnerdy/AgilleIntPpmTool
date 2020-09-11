@@ -13,7 +13,7 @@ public class ProjectService {
 	@Autowired
 	private ProjectRepository projectRepository;
 
-	public Project savePrUpdateProject(Project project) {
+	public Project saveOrUpdateProject(Project project) {
 		// Logic
 		try {
 			project.setProjectIdentifier(project.getProjectIdentifier().toUpperCase());
@@ -39,4 +39,17 @@ public class ProjectService {
 	public Iterable<Project> findAllProjects(){
 		return projectRepository.findAll();		
 	}
+	
+	public void deleteProjectByIdentifier(String projectId) {
+		Project project = projectRepository.findByProjectIdentifier(projectId);
+		
+		if(project == null) {
+			throw new ProjectIdException(
+					"Cannot delete Project with Id '" + projectId + "'. This doesnot exists");
+		}
+		
+		projectRepository.delete(project);
+	}
+	
+
 }

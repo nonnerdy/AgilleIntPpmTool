@@ -7,9 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,7 +35,7 @@ public class ProjectController {
 		
 		ResponseEntity<?> errorMap = mapValidationService.MapValidationService(result);
 		if(errorMap!=null) return errorMap;
-		Project project1 = projectService.savePrUpdateProject(project);
+		Project project1 = projectService.saveOrUpdateProject(project);
 		
 		return new ResponseEntity<Project>(project,HttpStatus.CREATED);
 	}
@@ -50,5 +52,17 @@ public class ProjectController {
 	@GetMapping("/all")
 	public Iterable<Project> getAllProject(){
 		return projectService.findAllProjects();
+	}
+	
+	@DeleteMapping("/{projectId}")
+	public ResponseEntity<?> deleteProject(@PathVariable String projectId){
+		projectService.deleteProjectByIdentifier(projectId);
+		return new ResponseEntity<String>("Project with Id : '"+projectId+"' was deleted.", HttpStatus.OK);
+	}
+	
+	@PutMapping("/{project}")
+	public ResponseEntity<?> updateProject(@RequestBody Project project){
+		projectService.saveOrUpdateProject(project);
+		return new ResponseEntity<Project>(project,HttpStatus.OK);
 	}
 }
